@@ -6,13 +6,16 @@ const View = ({ setAccount, contractAddress, setContractAddress }) => {
   const [contract, setContract] = useState();
   const [kitty, setKitty] = useState();
   const web3js = useContext(Web3Context);
+  const [abi, setABI] = useState();
+  const [abiPending, setABIPending] = useState(false);
 
   useEffect(() => {
     async function getContractABI(address) {
-      const abi = await abiService.get(address);
-      debugger;
-      if (abi && web3js) {
-        debugger;
+      if (!abi && !abiPending) {
+        setABIPending(true);
+        setABI(await abiService.get(address));
+      } else if (abi && web3js) {
+        setABIPending(false);
         const contract = new web3js.eth.Contract(abi, address);
         setContract(contract);
         const kitty = await contract.methods.getKitty(25).call()
@@ -22,7 +25,7 @@ const View = ({ setAccount, contractAddress, setContractAddress }) => {
     }
 
     getContractABI(contractAddress);
-  }, [contractAddress, web3js])
+  }, [contractAddress, web3js, abi])
 
   return (
     <div>

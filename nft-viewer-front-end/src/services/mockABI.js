@@ -1,3 +1,4 @@
+// CryptoKitties ABI
 const mockABI = [
   {
     constant: true,
